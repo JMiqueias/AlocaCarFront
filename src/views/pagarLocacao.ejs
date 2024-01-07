@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout}">
+<head>
+    <title>alugacar - Pagar Locação</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
+</head>
+<body>
+
+    <section layout:fragment="corpo">
+        <div class="container" style="margin-top: 30px;">
+            <div class="row">
+                <div class="col-sm-6 col-xs-8 mx-auto" id="classePrincipal">
+                    <!-- Inclusão do template de mensagem, se necessário -->
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-md-6" style="margin-top: 10px;">
+                    <div class="row">
+                        <div class="col-12 col-md-12">
+                            <div class="card mb-3">
+                                <img class="card-img-top" src="" alt="Card image cap" id="vehicleImage">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-6" style="margin-top: 10px;">
+                    <div class="row">
+                        <div class="col-12 col-md-12">
+                            <div class="card card-signin">
+                                <div class="card-body">
+                                    <h5 class="card-title text-center">Resumo da Locação</h5>
+                                    <hr>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">Total do Seguro - R$<span id="seguroValue"></span></li>
+                                        <li class="list-group-item">Total do veículo locação (sem incluir seguro) - R$<span id="valorLocacaoValue"></span></li>
+                                        <li class="list-group-item">Data Retirada - <span id="dataRetirarValue"></span></li>
+                                        <li class="list-group-item">Data Entrega - <span id="dataDevolverValue"></span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-12 col-md-12">
+                            <div class="card card-signin">
+                                <div class="card-body">
+                                    <h5 class="card-title text-center">Confirmar Locação</h5>
+                                    <hr>
+                                    <form method="POST" action="javascript:void(0);" id="confirmarForm">
+                                        <!-- Seus campos de formulário aqui -->
+                                        <!-- ... -->
+                                        <button style="text-align: center;" type="button" class="btn btn-primary" onclick="confirmarLocacao()">Confirmar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const veiculoId = urlParams.get('veiculoId');
+            const seguroId = urlParams.get('seguroId');
+            const dataInicio = urlParams.get('dataInicio');
+            const dataFinal = urlParams.get('dataFinal');
+            const token = localStorage.getItem('token');
+
+            // Verificar se o token existe, caso contrário, redirecionar para a página de login
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            fetch(`http://localhost:5000/car/${veiculoId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('vehicleImage').src = `http://localhost:5000/${data.carro.foto}`;
+                    document.getElementById('valorLocacaoValue').innerText = `${data.carro.valor}`;
+                    // Atualize outros campos do veículo, se necessário
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar detalhes do veículo:', error);
+                });
+
+            fetch(`http://localhost:5000/secure/${seguroId}`)
+                .then(response => response.json())
+                .then(seguroData => {
+                    document.getElementById('seguroValue').innerText = `${seguroData.secure.valorCobertura}`;
+                    // Atualize outros campos do seguro, se necessário
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar detalhes do seguro:', error);
+                });
+
+            document.getElementById('dataRetirarValue').innerText = dataInicio;
+            document.getElementById('dataDevolverValue').innerText = dataFinal;
+        });
+
+        function confirmarLocacao() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const veiculoId = urlParams.get('veiculoId');
+            const seguroId = urlParams.get('seguroId');
+            const dataInicio = urlParams.get('dataInicio');
+            const dataFinal = urlParams.get('dataFinal');
+            const token = localStorage.getItem('token');
+
+            // Verificar se o token existe, caso contrário, redirecionar para a página de login
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            const requestBody = {
+                seguro: seguroId,
+                dataInicioLocacao: dataInicio,
+                dataTerminoLocacao: dataFinal
+            };
+
+            // Adicione o código para realizar a requisição POST
+            fetch(`http://localhost:5000/car/rent/${veiculoId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Redirecionar em caso de sucesso
+                    window.location.href = '/minhasLocacoes';
+                } else {
+                    // Lidar com erro na resposta
+                    return response.json().then(errorData => Promise.reject(errorData));
+                }
+            })
+            .catch(errorData => {
+                // Mostrar erro no HTML
+                const errorMessage = errorData && errorData.message ? errorData.message : 'Erro ao confirmar locação.';
+                mostrarErroHtml(errorMessage);
+            });
+        }
+
+        function mostrarErroHtml(errorMessage) {
+            // Adicione código para mostrar a mensagem de erro no HTML
+            const errorDiv = document.getElementById('classePrincipal');
+            errorDiv.innerHTML = `<div class="alert alert-danger">${errorMessage}</div>`;
+        }
+    </script>
+
+</body>
+</html>

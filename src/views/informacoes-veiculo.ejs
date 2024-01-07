@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layout}">
+<head>
+	<title>alugacar - Informações do Veículo</title>
+	<meta charset="UTF-8" />
+	<link rel="stylesheet"
+		href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
+</head>
+<section layout:fragment="corpo">
+	<div class="container" style="margin-top: 30px;">
+		<div class="row">
+			<div class="col-12 col-md-6">
+				<div class="card mb-3">
+					<img class="card-img-top" src="" alt="Card image cap" id="vehicleImage">
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item">Nome: <span id="vehicleName"></span></li>
+						<li class="list-group-item">Tipo: <span id="vehicleBrand"></span></li>
+						<li class="list-group-item">Categoria: <span id="vehicleCategory"></span></li>
+						<li class="list-group-item">Preço: R$<span id="vehiclePrice"></span></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-12 col-md-6">
+				<div class="card card-signin">
+					<div class="card-body">
+						<h5 class="card-title text-center">Informações Adicionais</h5>
+						<hr>
+						<form method="POST" action="/pagarLocacao" onsubmit="return redirecionarParaPagarLocacao()" enctype="multipart/form-data">
+							<div class="form-group">
+								<label>Seguros</label>
+								<select id="seguro" name="seguro" class="form-control" required onchange="displaySeguroDescription()">
+									<option value="">Opções</option>
+									<option value="65980628b422e48c9264cf63">Seguro Residencial</option>
+									<option value="659805032f2b30c59c698a7d">Seguro de Automóvel Completo</option>
+								</select>
+								<p id="seguroDescription"></p>
+							</div>
+							<div class="form-group">
+								<label>Data de início</label>
+								<input type="date" id="dataInicio" name="dataInicio" class="form-control" required>
+							</div>
+							<div class="form-group">
+								<label>Data final</label>
+								<input type="date" id="dataFinal" name="dataFinal" class="form-control" required>
+							</div>
+							<div class="form-group" style="text-align: right;">
+								<button type="submit" class="btn btn-primary">Pagar Locação</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	function displaySeguroDescription() {
+		const seguroSelect = document.getElementById('seguro');
+		const seguroDescription = document.getElementById('seguroDescription');
+		const selectedOption = seguroSelect.options[seguroSelect.selectedIndex];
+
+		seguroDescription.innerText = selectedOption.getAttribute('data-description');
+	}
+
+	function redirecionarParaPagarLocacao() {
+		const seguroSelect = document.getElementById('seguro');
+		const dataInicio = document.getElementById('dataInicio').value;
+		const dataFinal = document.getElementById('dataFinal').value;
+		const veiculoId = new URLSearchParams(window.location.search).get('id'); // Obter o ID do veículo da URL
+
+		const seguroSelecionado = seguroSelect.options[seguroSelect.selectedIndex].value; // Obter o ID do seguro selecionado
+
+		// Redirecionamento para pagarLocacao.html passando parâmetros via URL
+		window.location.href = `/pagarLocacao?veiculoId=${veiculoId}&seguroId=${seguroSelecionado}&dataInicio=${dataInicio}&dataFinal=${dataFinal}`;
+		return false; // Evitar que o formulário faça o envio tradicional
+	}
+
+	document.addEventListener("DOMContentLoaded", function () {
+		const urlParams = new URLSearchParams(window.location.search);
+		const veiculoId = urlParams.get('id');
+
+		if (veiculoId) {
+			// Buscar informações do veículo
+			fetch(`http://localhost:5000/car/${veiculoId}`)
+				.then(response => response.json())
+				.then(data => {
+					document.getElementById('vehicleImage').src = `http://localhost:5000/${data.carro.foto}`;
+					document.getElementById('vehicleName').innerText = data.carro.nome;
+					document.getElementById('vehicleBrand').innerText = data.carro.tipo;
+					document.getElementById('vehicleCategory').innerText = data.carro.categoria;
+					document.getElementById('vehiclePrice').innerText = data.carro.valor;
+
+					// Buscar opções de seguros
+					fetch('http://localhost:5000/secure')
+						.then(response => response.json())
+						.then(segurosData => {
+							const seguroSelect = document.getElementById('seguro');
+							segurosData.forEach(seguro => {
+								const option = document.createElement('option');
+								option.value = seguro.id_seguro;
+								option.text = `${seguro.nome} R$${seguro.preco}`;
+								option.setAttribute('data-description', seguro.descricao);
+								seguroSelect.appendChild(option);
+							});
+						})
+						.catch(error => {
+							console.error('Erro ao buscar opções de seguros:', error);
+						});
+				})
+				.catch(error => {
+					console.error('Erro ao buscar dados da API do veículo:', error);
+				});
+		} else {
+			console.error('ID do veículo não encontrado na URL');
+		}
+	});
+</script>
+
+</html>

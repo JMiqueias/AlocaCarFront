@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<title>Minhas Locações</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.css"
+	rel="stylesheet">
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.js"></script>
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<body>
+
+	<header class="navbar navbar-expand-lg navbar-dark w3-large"
+		style="background-color: #0275df;" th:fragment="cabecalho">
+		<a class="navbar-brand" href="/"><i class="fa fa-car"></i> AlocaCar</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+			</ul>
+			<div class="form-inline my-2 my-lg-0">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item active"><a id="logoutLink" class="nav-link" href="#">Sair</a></li>
+				</ul>
+			</div>
+		</div>
+	</header>
+	<!-- Sidebar -->
+	<div class="w3-sidebar w3-light-grey w3-bar-block" style="width: 25%">
+		<h3 class="w3-bar-item">Menu</h3>
+		<a href="/" class="w3-bar-item w3-button">Home</a> <a href="/minhasLocacoes"
+			class="w3-bar-item w3-button">Minhas Locações</a>
+
+		<div id="listar" name="listar"></div>
+	</div>
+
+	<!-- Page Content -->
+    <div style="margin-left: 25%; margin-top: 20px;">
+        <div class="w3-container">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Tipo</th>
+                            <th>Categoria</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaVeiculos">
+                        <!-- Os dados dos veículos locados serão inseridos aqui -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Verifica se o token está presente no localStorage
+            const token = localStorage.getItem('token');
+            if (!token) {
+                // Redireciona para a página de login se o token não estiver presente
+                window.location.href = '/login';
+                return;
+            }
+
+            const apiUrl = 'http://localhost:5000/car/byUser';
+
+            // Configuração do cabeçalho da requisição com o token
+            const headers = {
+                'Authorization': `Bearer ${token}`
+            };
+
+            fetch(apiUrl, {
+                method: 'GET',
+                headers: headers
+            })
+            .then(response => response.json())
+            .then(data => {
+                const listaVeiculos = document.getElementById('listaVeiculos');
+
+                // Limpa o conteúdo atual da tabela
+                listaVeiculos.innerHTML = '';
+
+                data.carros.forEach(carro => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${carro.nome}</td>
+                        <td>${carro.tipo}</td>
+                        <td>${carro.categoria}</td>
+                        <td>${carro.valor}</td>
+                    `;
+                    listaVeiculos.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao buscar carros locados:', error);
+            });
+
+            // Evento de clique no link de logout
+            const logoutLink = document.getElementById('logoutLink');
+            logoutLink.addEventListener('click', function () {
+                // Remove o token do localStorage
+                localStorage.removeItem('token');
+                // Redireciona para a página de login após o logout
+                window.location.href = '/';
+            });
+        });
+    </script>
+
+</body>
+</html>
+
+

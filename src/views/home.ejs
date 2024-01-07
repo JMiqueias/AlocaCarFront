@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout}">
+<head>
+<title>alugacar - Home</title>
+<meta charset="UTF-8" />
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.css"
+	rel="stylesheet">
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.js"></script>
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="home.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+	<header class="navbar navbar-expand-lg navbar-dark w3-large"
+		style="background-color: #0275df;" th:fragment="cabecalho">
+		<a class="navbar-brand" href="/"><i class="fa fa-car"></i> AlocaCar</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+			</ul>
+			<div class="form-inline my-2 my-lg-0">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item active"><a href="/login"><i class="fa fa-user" style="font-size: 30px; margin-left: 60px;"></i></a></li>
+				</ul>
+			</div>
+		</div>
+	</header>
+
+	<section layout:fragment="corpo">
+		<div class="btn-topo2" style="margin: 32px 0;" id="about">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-6 col-xs-8 mx-auto" id="classePrincipal">
+						<th:block th:include="veiculo/mensagemValidacao"></th:block>
+					</div>
+				</div>
+				<!--<div class="w3-display-left w3-padding ">
+					<div class="w3-container w3-red" style="text-align: center;">
+						<h2>
+							<i class="fa fa-car"></i> AlugaCar <a href="login.html"><i class="fa fa-user" style="font-size: 30px; margin-left: 60px;"></i></a>
+						</h2>
+					</div> -->
+					<!--<form method="GET" th:action="@{/carro/buscar}">
+						<div class="w3-container w3-white w3-padding-16">
+
+							<label><i class="fa fa-search"></i> Modelo:</label>
+							<input class="form-control" type="text"
+								placeholder="Informe a cidade" id="nome" name="nome" required>
+							</br>
+
+							<button class="w3-button w3-dark-grey" type="submit">
+								<i class="fa fa-search w3-margin-right"></i>Buscar
+							</button>
+						</div>
+					</form> -->
+				</div>
+			</div>
+			<div style="text-align: center;">
+				<img src="cm3.png" style="width: 50%; margin-left: auto; margin-right: auto;">
+			</div>
+		</div>
+
+		<!-- Page content -->
+		<div class="btn-ctg" style="text-align: center;">
+			<h2>Veículos</h2>
+			</br>
+			<!-- Div onde os veículos serão mostrados -->
+			<div id="veiculos" class="w3-row-padding w3-padding-16">
+				<!-- Aqui é onde os veículos serão exibidos -->
+			</div>
+
+			<div style="text-align: center;">
+				<a href="/lista" class="btn btn-dark">Mostrar todos os carros</a>
+			</div>
+
+		</div>
+
+		</div>
+		</br>
+		<div class="w3-container" id="contact" style="text-align: center;">
+			<h2>Contato</h2>
+			<p>Se você tiver alguma dúvida, não hesite em perguntar.</p>
+			<i class="fa fa-map-marker w3-text-red" style="width: 30px"></i> Picos, PI<br> <i class="fa fa-phone w3-text-red"
+				style="width: 30px"></i> Phone: (86) 99414-9637<br> <i
+				class="fa fa-envelope w3-text-red" style="width: 30px"> </i> Email:
+			alugacar@gmail.com<br> </br>
+		</div>
+		</div>
+	</section>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+		  const apiUrl = "http://localhost:5000/car?disponivel=true&limit=4";
+  
+		  fetch(apiUrl)
+			.then((response) => response.json())
+
+			.then((data) => {
+			  console.log(data);
+			  const veiculosDiv = document.getElementById("veiculos");
+			  veiculosDiv.innerHTML = "";
+  
+			  data.carros.forEach((veiculo) => {
+				const veiculoElement = document.createElement("div");
+				veiculoElement.className = "w3-third w3-margin-bottom";
+
+				const link = document.createElement("a");
+				link.href = `/informacoes-veiculo?id=${veiculo.id}`;
+
+				const img = document.createElement("img");
+				img.src = "http://localhost:5000/"+ veiculo.foto;
+				img.alt = veiculo.nome;
+				img.style.width = "90%";
+
+				const veiculoContent = document.createElement("div");
+				veiculoContent.className = "w3-container w3-white";
+				veiculoContent.innerHTML = `
+					<h3>${veiculo.nome}</h3>
+					<h5 class="w3-opacity">R$ ${veiculo.valor},00</h5>
+					<p class="w3-large">
+					<i class="fa fa-credit-card"></i> <i class="fa fa-money"></i>
+					</p>
+				`;
+
+				link.appendChild(img);
+				link.appendChild(veiculoContent);
+
+				veiculoElement.appendChild(link);
+				veiculosDiv.appendChild(veiculoElement);
+				});
+			})
+			.catch((error) => {
+			  console.error("Erro ao buscar dados da API:", error);
+			});
+		});
+
+		function verificarToken() {
+			const token = localStorage.getItem('token'); // Obtendo o token do armazenamento local
+
+			if (token) {
+			// Se o token existir, o usuário está logado, redirecionar para minhasLocacoes.html
+			window.location.href = '/minhasLocacoes';
+			} else {
+			// Se não houver token, o usuário não está logado, redirecionar para login.html
+			window.location.href = '/login';
+			}
+		}
+
+		// Adicione um evento de clique ao ícone de usuário
+		document.addEventListener("DOMContentLoaded", function() {
+			const userIcon = document.querySelector('.fa-user');
+			if (userIcon) {
+			userIcon.addEventListener('click', function(event) {
+				event.preventDefault(); // Prevenir o comportamento padrão do link
+
+				verificarToken(); // Chamando a função de verificação do token ao clicar no ícone de usuário
+			});
+			}
+  });
+
+	  </script>
+
+
+</body>
+</html>
+
+  
