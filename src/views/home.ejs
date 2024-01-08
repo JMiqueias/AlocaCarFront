@@ -4,7 +4,7 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layout}">
 <head>
-<title>alugacar - Home</title>
+<title>Alugacar - Home</title>
 <meta charset="UTF-8" />
 <link rel="stylesheet"
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
@@ -111,7 +111,7 @@
 
 	<script>
 		document.addEventListener("DOMContentLoaded", function () {
-		  const apiUrl = "http://localhost:5000/car?disponivel=true&limit=4";
+		  const apiUrl = "http://18.230.195.216:443/car?disponivel=true&limit=4";
   
 		  fetch(apiUrl)
 			.then((response) => response.json())
@@ -129,7 +129,7 @@
 				link.href = `/informacoes-veiculo?id=${veiculo.id}`;
 
 				const img = document.createElement("img");
-				img.src = "http://localhost:5000/"+ veiculo.foto;
+				img.src = "http://18.230.195.216:443/"+ veiculo.foto;
 				img.alt = veiculo.nome;
 				img.style.width = "90%";
 

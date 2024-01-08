@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8" />
-    <title>SLV - Lista de veículos</title>
+    <title>Alugacar - Lista de veículos</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
 </head>
 <body>
@@ -32,7 +32,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             const carTable = document.getElementById('carTable');
 
-            fetch('http://localhost:5000/car?disponivel=true')
+            fetch('http://18.230.195.216:443/car?disponivel=true')
                 .then(response => response.json())
                 .then(data => {
                     const carros = data.carros || []; // Verifica se existe a chave 'carros' na resposta
@@ -42,7 +42,7 @@
                         // Cria links para a página 'informacoes-veiculo.html' ao redor da imagem e do nome do veículo
                         const imagemLink = document.createElement('a');
                         imagemLink.href = `/informacoes-veiculo?id=${carro.id}`;
-                        imagemLink.innerHTML = `<img src="http://localhost:5000/${carro.foto}" width="130" height="80">`;
+                        imagemLink.innerHTML = `<img src="http://18.230.195.216:443/${carro.foto}" width="130" height="80">`;
 
                         const nomeVeiculoLink = document.createElement('a');
                         nomeVeiculoLink.href = `/informacoes-veiculo?id=${carro.id}`;

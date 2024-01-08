@@ -4,7 +4,7 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
 	layout:decorate="~{layout}">
 <head>
-	<title>alugacar - Informações do Veículo</title>
+	<title>Alugacar - Informações do Veículo</title>
 	<meta charset="UTF-8" />
 	<link rel="stylesheet"
 		href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
@@ -33,8 +33,8 @@
 								<label>Seguros</label>
 								<select id="seguro" name="seguro" class="form-control" required onchange="displaySeguroDescription()">
 									<option value="">Opções</option>
-									<option value="65980628b422e48c9264cf63">Seguro Residencial</option>
-									<option value="659805032f2b30c59c698a7d">Seguro de Automóvel Completo</option>
+									<option value="659c1db368c18b22f937c163">Seguro Residencial</option>
+									<option value="659c1dc268c18b22f937c16a">Seguro de Automóvel Completo</option>
 								</select>
 								<p id="seguroDescription"></p>
 							</div>
@@ -85,17 +85,17 @@
 
 		if (veiculoId) {
 			// Buscar informações do veículo
-			fetch(`http://localhost:5000/car/${veiculoId}`)
+			fetch(`http://18.230.195.216:443/car/${veiculoId}`)
 				.then(response => response.json())
 				.then(data => {
-					document.getElementById('vehicleImage').src = `http://localhost:5000/${data.carro.foto}`;
+					document.getElementById('vehicleImage').src = `http://18.230.195.216:443/${data.carro.foto}`;
 					document.getElementById('vehicleName').innerText = data.carro.nome;
 					document.getElementById('vehicleBrand').innerText = data.carro.tipo;
 					document.getElementById('vehicleCategory').innerText = data.carro.categoria;
 					document.getElementById('vehiclePrice').innerText = data.carro.valor;
 
 					// Buscar opções de seguros
-					fetch('http://localhost:5000/secure')
+					fetch('http://18.230.195.216:443/secure')
 						.then(response => response.json())
 						.then(segurosData => {
 							const seguroSelect = document.getElementById('seguro');
