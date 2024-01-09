@@ -33,8 +33,8 @@
 								<label>Seguros</label>
 								<select id="seguro" name="seguro" class="form-control" required onchange="displaySeguroDescription()">
 									<option value="">Opções</option>
-									<option value="659c1db368c18b22f937c163">Seguro Residencial</option>
-									<option value="659c1dc268c18b22f937c16a">Seguro de Automóvel Completo</option>
+									<option value="659d5eb35cb9ff3bfffd7648">Seguro Residencial</option>
+									<option value="659d5ee05cb9ff3bfffd764d">Seguro de Automóvel Completo</option>
 								</select>
 								<p id="seguroDescription"></p>
 							</div>
@@ -85,17 +85,17 @@
 
 		if (veiculoId) {
 			// Buscar informações do veículo
-			fetch(`http://18.230.195.216:443/car/${veiculoId}`)
+			fetch(`http://20.55.234.51:443/car/${veiculoId}`)
 				.then(response => response.json())
 				.then(data => {
-					document.getElementById('vehicleImage').src = `http://18.230.195.216:443/${data.carro.foto}`;
+					document.getElementById('vehicleImage').src = `http://20.55.234.51:443/${data.carro.foto}`;
 					document.getElementById('vehicleName').innerText = data.carro.nome;
 					document.getElementById('vehicleBrand').innerText = data.carro.tipo;
 					document.getElementById('vehicleCategory').innerText = data.carro.categoria;
 					document.getElementById('vehiclePrice').innerText = data.carro.valor;
 
 					// Buscar opções de seguros
-					fetch('http://18.230.195.216:443/secure')
+					fetch('http://20.55.234.51:443/secure')
 						.then(response => response.json())
 						.then(segurosData => {
 							const seguroSelect = document.getElementById('seguro');
