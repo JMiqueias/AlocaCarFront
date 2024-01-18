@@ -13,7 +13,7 @@ const routes = require("./routes/front.route");
 
 // Propriedades do servidor
 const app = express();
-const port = process.env.PORT || 4500;
+const port = process.env.PORT || 80;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/src/views'));
