@@ -80,10 +80,10 @@
                 return;
             }
 
-            fetch(`http://18.230.195.216:443/car/${veiculoId}`)
+            fetch(`http://20.55.234.51:443/car/${veiculoId}`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('vehicleImage').src = `http://18.230.195.216:443/${data.carro.foto}`;
+                    document.getElementById('vehicleImage').src = `http://20.55.234.51:443/${data.carro.foto}`;
                     document.getElementById('valorLocacaoValue').innerText = `${data.carro.valor}`;
                     // Atualize outros campos do veículo, se necessário
                 })
@@ -91,7 +91,7 @@
                     console.error('Erro ao buscar detalhes do veículo:', error);
                 });
 
-            fetch(`http://18.230.195.216:443/secure/${seguroId}`)
+            fetch(`http://104.198.144.145:443/secure/${seguroId}`)
                 .then(response => response.json())
                 .then(seguroData => {
                     document.getElementById('seguroValue').innerText = `${seguroData.secure.valorCobertura}`;
@@ -126,7 +126,7 @@
             };
 
             // Adicione o código para realizar a requisição POST
-            fetch(`http://18.230.195.216:443/car/rent/${veiculoId}`, {
+            fetch(`http://20.55.234.51:443/car/rent/${veiculoId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
